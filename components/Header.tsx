@@ -28,5 +28,6 @@ export function Header({ onCommand }: { onCommand: (command: string) => void }) 
     <div className="hint" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
       {complete ? <button className="hint-command" onClick={() => onCommand(current.command)}>{hint}</button> : hint}
     </div>
+    <div className="profile-placeholder" aria-label="Profile photo placeholder" />
   </header>;
 }
