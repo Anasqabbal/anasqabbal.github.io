@@ -7,6 +7,7 @@ const commandDescriptions: Record<string, string> = {
   connect: "how to reach me",
   projects: "what I built",
   education: "where I studied",
+  profile: "full terminal profile",
   clear: "reset the screen",
 };
 
