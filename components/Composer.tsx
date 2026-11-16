@@ -44,7 +44,7 @@ export function Composer({ value, onChange, onSubmit, onKeyDown }: { value: stri
   }, [value]);
   const submit = (event: FormEvent) => { event.preventDefault(); onSubmit(); };
   return <form className="composer" onSubmit={submit}>
-    <span className="composer-prompt">anasqabbal_$:</span>
+    <span className="composer-prompt"><span className="desktop-prompt">anasqabbal_$:</span><span className="mobile-prompt">_$:</span></span>
     <span className={`composer-input${!value && hint ? " has-hint" : ""}`}>
       <span ref={mirrorRef} className="composer-mirror" aria-hidden="true">{value}</span>
       <span className="input-cursor" aria-hidden="true" style={{ left: `${cursorOffset}px` }} />
