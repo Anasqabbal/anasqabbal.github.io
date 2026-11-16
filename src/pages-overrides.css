@@ -1,0 +1,46 @@
+.terminal-composer {
+  width: min(100% - 48px, 840px);
+  margin: 0 auto 24px;
+}
+
+.terminal-form {
+  padding: 10px 14px 10px 20px;
+  border: 1px solid rgba(138, 138, 138, 0.35);
+  border-radius: 18px;
+  background: rgba(20, 20, 20, 0.92);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.terminal-icon-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.terminal-icon-button:hover,
+.terminal-icon-button[aria-pressed="true"] {
+  background: rgba(57, 255, 20, 0.1);
+  color: var(--accent);
+}
+
+.terminal-shell .terminal-run {
+  border-radius: 10px;
+}
+
+@media (max-width: 420px) {
+  .terminal-composer {
+    width: min(100% - 24px, 840px);
+    margin-bottom: 12px;
+  }
+
+  .terminal-icon-button {
+    width: 30px;
+    height: 30px;
+  }
+}

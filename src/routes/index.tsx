@@ -358,7 +358,10 @@ export function TerminalPortfolio() {
           ))}
         </div>
 
-        <div className="terminal-composer">
+        <div
+          className="terminal-composer"
+          style={{ width: "min(100% - 48px, 840px)", margin: "0 auto 24px" }}
+        >
           {suggestionsOpen && filteredCommands.length > 0 && (
             <div className="terminal-suggestions" role="listbox" aria-label="Available commands">
               {filteredCommands.map(({ name, description }, index) => (
@@ -377,7 +380,18 @@ export function TerminalPortfolio() {
               ))}
             </div>
           )}
-          <form className="terminal-form" onSubmit={submit} aria-label="Run a terminal command">
+          <form
+            className="terminal-form"
+            style={{
+              padding: "10px 14px 10px 20px",
+              border: "1px solid rgba(138, 138, 138, 0.35)",
+              borderRadius: "18px",
+              background: "rgba(20, 20, 20, 0.92)",
+              boxShadow: "0 12px 32px rgba(0, 0, 0, 0.28)",
+            }}
+            onSubmit={submit}
+            aria-label="Run a terminal command"
+          >
             <label className="terminal-command-prompt" htmlFor="terminal-command">
               anasqabbal$<span className="terminal-cursor" aria-hidden="true">_</span>
             </label>
@@ -405,6 +419,7 @@ export function TerminalPortfolio() {
               aria-label={isListening ? "Stop voice input" : "Start voice input"}
               aria-pressed={isListening}
               onClick={toggleVoiceInput}
+              style={{ borderRadius: "10px" }}
             >
               {isListening ? <Square size={16} aria-hidden="true" /> : <Mic size={17} aria-hidden="true" />}
             </button>
@@ -413,6 +428,7 @@ export function TerminalPortfolio() {
               className="terminal-icon-button"
               aria-label="Download portfolio text file"
               onClick={downloadPortfolio}
+              style={{ borderRadius: "10px" }}
             >
               <Download size={17} aria-hidden="true" />
             </button>
