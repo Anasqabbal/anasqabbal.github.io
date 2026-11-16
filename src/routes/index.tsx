@@ -133,6 +133,7 @@ export function TerminalPortfolio() {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
   const draftBeforeHistory = useRef("");
   const inputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<HTMLDivElement>(null);
@@ -173,6 +174,7 @@ export function TerminalPortfolio() {
     const command = rawCommand.trim().toLowerCase();
     setDraft("");
     setSuggestionsOpen(false);
+    setSelectedSuggestion(-1);
     setHistoryIndex(-1);
     draftBeforeHistory.current = "";
     if (!command) return;
@@ -193,15 +195,47 @@ export function TerminalPortfolio() {
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const suggestion = filteredCommands[selectedSuggestion];
+    if (suggestionsOpen && suggestion) {
+      runCommand(`/${suggestion.name}`);
+      return;
+    }
     runCommand(draft);
   };
+
+  const filteredCommands = commands.filter(({ name }) =>
+    `/${name}`.startsWith(draft.toLowerCase()),
+  );
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setDraft("");
       setSuggestionsOpen(false);
+      setSelectedSuggestion(-1);
       setHistoryIndex(-1);
       return;
+    }
+
+    if (suggestionsOpen && filteredCommands.length > 1) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setSelectedSuggestion((current) => (current + 1) % filteredCommands.length);
+        return;
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setSelectedSuggestion((current) =>
+          current <= 0 ? filteredCommands.length - 1 : current - 1,
+        );
+        return;
+      }
+
+      if (event.key === "Enter" && selectedSuggestion >= 0) {
+        event.preventDefault();
+        runCommand(`/${filteredCommands[selectedSuggestion].name}`);
+        return;
+      }
     }
 
     if (event.key === "ArrowUp" && history.length > 0) {
@@ -252,6 +286,24 @@ export function TerminalPortfolio() {
         </div>
 
         <div className="terminal-composer">
+          {suggestionsOpen && filteredCommands.length > 0 && (
+            <div className="terminal-suggestions" role="listbox" aria-label="Available commands">
+              {filteredCommands.map(({ name, description }, index) => (
+                <button
+                  key={name}
+                  type="button"
+                  id={`command-suggestion-${name}`}
+                  role="option"
+                  aria-selected={selectedSuggestion === index}
+                  className={`terminal-suggestion ${selectedSuggestion === index ? "is-selected" : ""}`}
+                  onClick={() => chooseCommand(name)}
+                >
+                  <strong>/{name}</strong>
+                  <span>{description}</span>
+                </button>
+              ))}
+            </div>
+          )}
           <form className="terminal-form" onSubmit={submit} aria-label="Run a terminal command">
             <label className="terminal-command-prompt" htmlFor="terminal-command">
               anasqabbal$<span className="terminal-cursor" aria-hidden="true">_</span>
@@ -269,6 +321,7 @@ export function TerminalPortfolio() {
                 const nextDraft = event.target.value;
                 setDraft(nextDraft);
                 setSuggestionsOpen(nextDraft.startsWith("/"));
+                setSelectedSuggestion(nextDraft.startsWith("/") ? 0 : -1);
               }}
               onKeyDown={handleKeyDown}
               placeholder="/help"
@@ -277,23 +330,6 @@ export function TerminalPortfolio() {
               <span aria-hidden="true">↵</span> Run
             </Button>
           </form>
-          {suggestionsOpen && (
-            <div className="terminal-suggestions" role="listbox" aria-label="Available commands">
-              {commands
-                .filter(({ name }) => `/${name}`.startsWith(draft.toLowerCase()))
-                .map(({ name, description }) => (
-                  <button
-                    key={name}
-                    type="button"
-                    className="terminal-suggestion"
-                    onClick={() => chooseCommand(name)}
-                  >
-                    <strong>/{name}</strong>
-                    <span>{description}</span>
-                  </button>
-                ))}
-            </div>
-          )}
         </div>
       </main>
     </div>

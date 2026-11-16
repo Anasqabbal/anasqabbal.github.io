@@ -11,6 +11,10 @@ describe("terminal portfolio", () => {
 
     fireEvent.change(input, { target: { value: "/" } });
     expect(screen.getByRole("listbox", { name: "Available commands" })).toBeInTheDocument();
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(screen.getByRole("option", { name: /\/about/ })).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(screen.getByRole("option", { name: /\/help/ })).toHaveAttribute("aria-selected", "true");
     fireEvent.change(input, { target: { value: "/skills" } });
     fireEvent.click(screen.getByRole("button", { name: "Run command" }));
     expect(screen.getByText("Areas of practice")).toBeInTheDocument();
