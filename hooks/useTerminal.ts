@@ -12,7 +12,8 @@ export function useTerminal() {
     if (!command) return;
     if (command === "clear") { setEntries([]); setHistory([]); return; }
     setHistory((items) => [...items, raw]);
-    setEntries((items) => [...items, { id: Date.now() + items.length, raw, command, streaming: true }]);
+    // Keep the conversation focused on the latest response.
+    setEntries([{ id: Date.now(), raw, command, streaming: true }]);
   };
   return { entries, run, history, historyIndex, setHistoryIndex };
 }
