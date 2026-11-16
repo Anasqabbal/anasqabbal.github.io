@@ -325,8 +325,8 @@ input {
 
 .terminal-composer {
   z-index: 1;
-  width: 100%;
-  background: var(--bg-deep);
+  width: min(100% - 48px, 840px);
+  margin: 0 auto 24px;
 }
 
 .terminal-form {
@@ -336,7 +336,11 @@ input {
   align-items: center;
   gap: 14px;
   margin: 0 auto;
-  padding: 14px 32px;
+  padding: 10px 14px 10px 20px;
+  border: 1px solid rgba(138, 138, 138, 0.35);
+  border-radius: 18px;
+  background: rgba(20, 20, 20, 0.92);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
 }
 
 .terminal-command-prompt {
@@ -370,11 +374,29 @@ input {
   opacity: 0.8;
 }
 
+.terminal-icon-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.terminal-icon-button:hover,
+.terminal-icon-button[aria-pressed="true"] {
+  background: rgba(57, 255, 20, 0.1);
+  color: var(--accent);
+}
+
 .terminal-shell .terminal-run {
   min-width: 78px;
   height: 38px;
   border: 1px solid var(--accent-dim);
-  border-radius: 0;
+  border-radius: 10px;
   background: transparent;
   color: var(--accent);
   font-family: var(--font-mono);
@@ -460,15 +482,20 @@ input {
   .terminal-form {
     min-height: 68px;
     gap: 10px;
-    padding: 12px 20px;
+    padding: 10px 12px 10px 16px;
   }
 
   .terminal-suggestions {
-    padding-inline: 20px;
+    padding-inline: 16px;
   }
 }
 
 @media (max-width: 420px) {
+  .terminal-composer {
+    width: min(100% - 24px, 840px);
+    margin-bottom: 12px;
+  }
+
   .terminal-form {
     gap: 8px;
   }
@@ -480,6 +507,11 @@ input {
   .terminal-shell .terminal-run {
     min-width: 62px;
     padding-inline: 10px;
+  }
+
+  .terminal-icon-button {
+    width: 30px;
+    height: 30px;
   }
 }
 

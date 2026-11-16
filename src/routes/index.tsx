@@ -8,8 +8,20 @@ import {
 } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { Download, Mic, Square } from "lucide-react";
 
 type CommandEntry = { id: number; command: string };
+type SpeechRecognitionInstance = {
+  start: () => void;
+  stop: () => void;
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: ((event: { results: { [index: number]: { [index: number]: { transcript: string } } } }) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+};
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 
 const commands = [
   { name: "help", description: "show available commands" },
@@ -134,9 +146,11 @@ export function TerminalPortfolio() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
+  const [isListening, setIsListening] = useState(false);
   const draftBeforeHistory = useRef("");
   const inputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const entryId = useRef(0);
   const animationRef = useRef<number | null>(null);
 
@@ -266,6 +280,65 @@ export function TerminalPortfolio() {
     inputRef.current?.focus();
   };
 
+  const toggleVoiceInput = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      return;
+    }
+
+    const speechWindow = window as Window & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    };
+    const Recognition =
+      speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+
+    if (!Recognition) {
+      inputRef.current?.focus();
+      return;
+    }
+
+    const recognition = new Recognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+      const transcript = event.results[0]?.[0]?.transcript.trim() ?? "";
+      if (transcript) {
+        const command = transcript.startsWith("/") ? transcript : `/${transcript}`;
+        setDraft(command.toLowerCase());
+        setSuggestionsOpen(command.startsWith("/"));
+      }
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+    recognition.onerror = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+    recognitionRef.current = recognition;
+    setIsListening(true);
+    recognition.start();
+  };
+
+  const downloadPortfolio = () => {
+    const portfolio = [
+      "Anas Qabbal",
+      "Software Engineer — Systems, Full-Stack, Applied AI, DevOps",
+      "",
+      "Focus: dependable systems, thoughtful products, and practical AI-enabled tools.",
+      "GitHub: https://github.com/Anasqabbal",
+    ].join("\n");
+    const url = URL.createObjectURL(new Blob([portfolio], { type: "text/plain" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "anas-qabbal-portfolio.txt";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="terminal-shell">
       <main className="terminal-main" aria-label="Anas Qabbal developer portfolio">
@@ -326,6 +399,23 @@ export function TerminalPortfolio() {
               onKeyDown={handleKeyDown}
               placeholder="/help"
             />
+            <button
+              type="button"
+              className="terminal-icon-button"
+              aria-label={isListening ? "Stop voice input" : "Start voice input"}
+              aria-pressed={isListening}
+              onClick={toggleVoiceInput}
+            >
+              {isListening ? <Square size={16} aria-hidden="true" /> : <Mic size={17} aria-hidden="true" />}
+            </button>
+            <button
+              type="button"
+              className="terminal-icon-button"
+              aria-label="Download portfolio text file"
+              onClick={downloadPortfolio}
+            >
+              <Download size={17} aria-hidden="true" />
+            </button>
             <Button type="submit" variant="outline" className="terminal-run" aria-label="Run command">
               <span aria-hidden="true">↵</span> Run
             </Button>
