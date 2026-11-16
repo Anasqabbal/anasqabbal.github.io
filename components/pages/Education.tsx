@@ -1,0 +1,1 @@
+export function Education() { return <div className="page"><div className="label">// education</div><article className="education"><h2>42 Network</h2><p className="muted">Common core completed</p><p className="code">years: TODO · place: TODO</p></article></div>; }

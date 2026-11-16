@@ -1,0 +1,1 @@
+export function Connect() { return <div className="page"><div className="label">// connect</div>{[["github","https://github.com/Anasqabbal"],["linkedin","https://linkedin.com/in/anasqabbal"]].map(([label, href]) => <p className="contact-row" key={label}><span>{label}</span><a href={href} target="_blank" rel="noopener noreferrer">{href.replace("https://","")}</a></p>)}</div>; }
