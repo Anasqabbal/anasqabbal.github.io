@@ -8,7 +8,7 @@ export function Composer({ value, onChange, onSubmit, onKeyDown }: { value: stri
   const [hint, setHint] = useState("");
   useEffect(() => { inputRef.current?.focus(); }, []);
   useEffect(() => {
-    const text = "Type / OR disc to start discovering";
+    const text = 'type "/" or disc to start chat';
     let position = 0;
     let erasing = false;
     let timer: number;
