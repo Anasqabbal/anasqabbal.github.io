@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Block } from "@/components/Block";
+import { Block, type BlockHandle } from "@/components/Block";
 import { Composer } from "@/components/Composer";
+import { Header } from "@/components/Header";
 import { Slogan } from "@/components/Slogan";
 import { useTerminal } from "@/hooks/useTerminal";
 import { useTypewriter } from "@/hooks/useTypewriter";
@@ -12,6 +13,7 @@ export function Terminal() {
   const [manualValue, setManualValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const lastBlockRef = useRef<HTMLDivElement>(null);
+  const activeBlockRef = useRef<BlockHandle>(null);
   const { value: animatedValue, stop } = useTypewriter();
   const value = manualValue || animatedValue;
   const active = entries.length > 0;
@@ -22,13 +24,15 @@ export function Terminal() {
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
-  const submit = () => {
-    const submittedValue = value;
+  const execute = (raw: string) => {
+    activeBlockRef.current?.finish();
     stop();
     setManualValue("");
-    run(submittedValue);
+    run(raw);
     requestAnimationFrame(() => inputRef.current?.focus());
   };
+
+  const submit = () => execute(value);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     stop();
@@ -38,12 +42,13 @@ export function Terminal() {
   };
 
   return <main className={`terminal-page flex flex-col ${active ? "justify-end" : "items-center justify-center"}`}>
+    <Header onConnect={() => execute("/connect")} />
     <div className={`flex w-full flex-col ${active ? "flex-1 overflow-y-auto px-4 pb-8 pt-8 md:px-8" : "items-center"}`}>
       {!active && <div className="mb-12 max-w-[720px] animate-[fade-in_150ms_ease-out]"><Slogan /></div>}
-      {active && <div role="log" aria-live="polite" className="mx-auto flex w-full max-w-[720px] flex-col gap-12">{entries.map((entry, index) => <div key={entry.id} ref={index === entries.length - 1 ? lastBlockRef : undefined}><Block entry={entry} onCommand={(command) => { run(command); setManualValue(""); }} /></div>)}</div>}
+      {active && <div role="log" aria-live="polite" className="mx-auto flex w-full max-w-[720px] flex-col gap-12">{entries.map((entry, index) => <div key={entry.id} ref={index === entries.length - 1 ? lastBlockRef : undefined}><Block ref={index === entries.length - 1 ? activeBlockRef : undefined} entry={entry} onCommand={execute} /></div>)}</div>}
     </div>
     <div className={`w-full px-4 pb-[max(24px,env(safe-area-inset-bottom))] transition-[padding] duration-200 ease-out md:px-8 ${active ? "pt-4" : ""}`}>
-      <div className="mx-auto w-full max-w-[720px]"><Composer value={value} onChange={(next) => { stop(); setManualValue(next); }} onSubmit={submit} onKeyDown={handleKeyDown} inputRef={inputRef} /></div>
+      <div className="mx-auto w-full max-w-[720px]"><Composer value={value} onChange={(next) => { stop(); setManualValue(next); }} onFocus={(event) => { if (event.nativeEvent.isTrusted) stop(); }} onSubmit={submit} onKeyDown={handleKeyDown} inputRef={inputRef} /></div>
     </div>
   </main>;
 }
