@@ -19,5 +19,5 @@ export function Terminal() {
     setValue("");
     terminal.run(command);
   };
-  return <main className={terminal.entries.length ? "terminal state-b" : "terminal"}><Header onCommand={terminal.run} /><div className="chat" role="log" aria-live="polite">{!terminal.entries.length && <div className="idle"><Slogan /></div>}{terminal.entries.map((entry) => <Block key={entry.id} entry={entry} onCommand={terminal.run} />)}</div><div className={terminal.entries.length ? "composer-wrap composer-bottom" : "composer-wrap"}><Composer value={value} onChange={setValue} onSubmit={submit} onKeyDown={keyDown} onCommandSelect={selectCommand} /></div></main>;
+  return <main className={terminal.entries.length ? "terminal state-b" : "terminal"}><Header /><div className="chat" role="log" aria-live="polite">{!terminal.entries.length && <div className="idle"><Slogan /></div>}{terminal.entries.map((entry) => <Block key={entry.id} entry={entry} onCommand={terminal.run} />)}</div><div className={terminal.entries.length ? "composer-wrap composer-bottom" : "composer-wrap"}><Composer value={value} onChange={setValue} onSubmit={submit} onKeyDown={keyDown} onCommandSelect={selectCommand} /></div></main>;
 }

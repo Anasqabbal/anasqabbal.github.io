@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 
 const hintText = "To connect run /connect";
 
-export function Header({ onCommand }: { onCommand: (command: string) => void }) {
+export function Header() {
   const [hint, setHint] = useState("");
+
   useEffect(() => {
     let position = 0;
     let erasing = false;
@@ -36,12 +37,15 @@ export function Header({ onCommand }: { onCommand: (command: string) => void }) 
     return () => window.clearTimeout(timer);
   }, []);
 
-  const complete = hint === hintText;
   return <header className="site-header">
-    <div className="wordmark">AnasQABBAL$<span className="block-cursor" /></div>
-    <div className="hint">
-      {complete ? <button className="hint-command" onClick={() => onCommand("/connect")}>{hint}</button> : hint}
+    <div className="header-main">
+      <div className="wordmark">AnasQABBAL$</div>
+      <span className="header-cancel" aria-label="Cancelled">^C</span>
+      <div className="profile-placeholder" aria-label="Profile photo placeholder" />
     </div>
-    <div className="profile-placeholder" aria-label="Profile photo placeholder" />
+    <div className="header-typewriter">
+      <span className="block-cursor" />
+      <span className="hint">{hint}</span>
+    </div>
   </header>;
 }
