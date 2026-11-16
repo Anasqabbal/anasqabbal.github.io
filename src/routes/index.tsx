@@ -38,8 +38,10 @@ function CommandOutput({ command }: { command: string }) {
             <li><strong>skills</strong><span>Areas of practice</span></li>
             <li><strong>projects</strong><span>Selected work domains</span></li>
             <li><strong>contact</strong><span>Contact information</span></li>
+            <li><strong>github</strong><span>Open source profile</span></li>
             <li><strong>clear</strong><span>Clear the terminal stream</span></li>
           </ul>
+          <p className="terminal-note">Tip: use ↑ / ↓ to move through command history.</p>
         </>
       );
     case "about":
@@ -67,14 +69,20 @@ function CommandOutput({ command }: { command: string }) {
     case "projects":
       return (
         <>
-          <p>Work domains</p>
+          <p>Selected work domains</p>
           <ul className="terminal-output-list">
             <li><strong>Systems</strong><span>Dependable foundations and software tooling</span></li>
             <li><strong>Products</strong><span>Connected full-stack applications</span></li>
             <li><strong>Applied AI</strong><span>Useful intelligence integrated into software</span></li>
             <li><strong>Platform</strong><span>Repeatable builds and operational workflows</span></li>
           </ul>
-          <p className="terminal-note">Detailed project case studies have not been added yet.</p>
+          <p className="terminal-note">
+            Browse current work on{" "}
+            <a href="https://github.com/Anasqabbal/anasqabbal.github.io" target="_blank" rel="noreferrer">
+              github.com/Anasqabbal/anasqabbal.github.io
+            </a>
+            .
+          </p>
         </>
       );
     case "contact":
@@ -82,9 +90,21 @@ function CommandOutput({ command }: { command: string }) {
         <>
           <p>Get in touch</p>
           <p className="terminal-muted">
-            Direct email and social links have not been added to this profile yet.
+            The best place to connect is{" "}
+            <a href="https://github.com/Anasqabbal" target="_blank" rel="noreferrer">
+              github.com/Anasqabbal
+            </a>
+            .
           </p>
         </>
+      );
+    case "github":
+      return (
+        <p>
+          <a href="https://github.com/Anasqabbal" target="_blank" rel="noreferrer">
+            github.com/Anasqabbal
+          </a>
+        </p>
       );
     default:
       return (
@@ -196,7 +216,7 @@ export function TerminalPortfolio() {
           <div className="terminal-mark" aria-hidden="true">aq/</div>
           <div>
             <p className="terminal-name">Anas Qabbal</p>
-            <p className="terminal-role">SOFTWARE ENGINEER · SYSTEMS · FULL-STACK · AI · DEVOPS</p>
+            <p className="terminal-role">SOFTWARE ENGINEER · SYSTEMS · FULL-STACK · APPLIED AI · DEVOPS</p>
           </div>
         </div>
         <nav className="terminal-nav" aria-label="Portfolio sections">
@@ -226,7 +246,7 @@ export function TerminalPortfolio() {
               <h1>Anas Qabbal</h1>
               <p className="terminal-lede">Software Engineer — Systems, Full-Stack, Applied AI, DevOps</p>
               <p className="terminal-intro">
-                Building across the stack, from dependable systems and developer platforms to thoughtful products and practical AI.
+                Building dependable systems, thoughtful products, and practical AI-enabled tools across the stack.
               </p>
               <div className="terminal-welcome-actions" aria-label="Explore portfolio">
                 {shortcuts.map((command) => (

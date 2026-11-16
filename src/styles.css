@@ -267,7 +267,7 @@ input {
 }
 
 .terminal-stream {
-  width: min(100%, 1184px);
+  width: min(100%, 1120px);
   min-height: 0;
   flex: 1;
   align-self: center;
@@ -413,7 +413,7 @@ input {
 
 .terminal-form {
   display: flex;
-  width: min(100%, 1184px);
+  width: min(100%, 1120px);
   min-height: 76px;
   align-items: center;
   gap: 14px;
