@@ -1,10 +1,25 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
 type CommandEntry = { id: number; command: string };
 
-const shortcuts = ["about", "skills", "projects", "contact"];
+const commands = [
+  { name: "help", description: "show available commands" },
+  { name: "about", description: "profile and focus" },
+  { name: "skills", description: "areas of practice" },
+  { name: "projects", description: "selected work domains" },
+  { name: "contact", description: "contact information" },
+  { name: "github", description: "open source profile" },
+  { name: "clear", description: "clear the terminal stream" },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,12 +49,9 @@ function CommandOutput({ command }: { command: string }) {
         <>
           <p>Available commands</p>
           <ul className="terminal-output-list">
-            <li><strong>about</strong><span>Profile and focus</span></li>
-            <li><strong>skills</strong><span>Areas of practice</span></li>
-            <li><strong>projects</strong><span>Selected work domains</span></li>
-            <li><strong>contact</strong><span>Contact information</span></li>
-            <li><strong>github</strong><span>Open source profile</span></li>
-            <li><strong>clear</strong><span>Clear the terminal stream</span></li>
+            {commands.map(({ name, description }) => (
+              <li key={name}><strong>/{name}</strong><span>{description}</span></li>
+            ))}
           </ul>
           <p className="terminal-note">Tip: use ↑ / ↓ to move through command history.</p>
         </>
@@ -120,6 +132,7 @@ export function TerminalPortfolio() {
   const [draft, setDraft] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const draftBeforeHistory = useRef("");
   const inputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<HTMLDivElement>(null);
@@ -159,17 +172,23 @@ export function TerminalPortfolio() {
   const runCommand = useCallback((rawCommand: string) => {
     const command = rawCommand.trim().toLowerCase();
     setDraft("");
+    setSuggestionsOpen(false);
     setHistoryIndex(-1);
     draftBeforeHistory.current = "";
     if (!command) return;
 
-    if (command === "clear") {
+    if (!command.startsWith("/")) {
+      return;
+    }
+
+    const commandName = command.slice(1).split(/\s+/)[0];
+    if (commandName === "clear") {
       setEntries([]);
       return;
     }
 
     setHistory((previous) => [...previous, command]);
-    setEntries((previous) => [...previous, { id: entryId.current++, command }]);
+    setEntries((previous) => [...previous, { id: entryId.current++, command: commandName }]);
   }, []);
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -180,6 +199,7 @@ export function TerminalPortfolio() {
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setDraft("");
+      setSuggestionsOpen(false);
       setHistoryIndex(-1);
       return;
     }
@@ -190,6 +210,7 @@ export function TerminalPortfolio() {
       const nextIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
       setHistoryIndex(nextIndex);
       setDraft(history[nextIndex] ?? "");
+      setSuggestionsOpen(false);
     } else if (event.key === "ArrowDown" && historyIndex >= 0) {
       event.preventDefault();
       const nextIndex = historyIndex + 1;
@@ -197,76 +218,32 @@ export function TerminalPortfolio() {
         setHistoryIndex(-1);
         setDraft(draftBeforeHistory.current);
         draftBeforeHistory.current = "";
+        setSuggestionsOpen(false);
       } else {
         setHistoryIndex(nextIndex);
         setDraft(history[nextIndex] ?? "");
+        setSuggestionsOpen(false);
       }
     }
   };
 
-  const runShortcut = (command: string) => {
-    runCommand(command);
+  const chooseCommand = (command: string) => {
+    runCommand(`/${command}`);
     inputRef.current?.focus();
   };
 
   return (
     <div className="terminal-shell">
-      <header className="terminal-header">
-        <div className="terminal-identity">
-          <div className="terminal-mark" aria-hidden="true">aq/</div>
-          <div>
-            <p className="terminal-name">Anas Qabbal</p>
-            <p className="terminal-role">SOFTWARE ENGINEER · SYSTEMS · FULL-STACK · APPLIED AI · DEVOPS</p>
-          </div>
-        </div>
-        <nav className="terminal-nav" aria-label="Portfolio sections">
-          {shortcuts.map((command) => (
-            <Button
-              key={command}
-              type="button"
-              variant="ghost"
-              className="terminal-shortcut"
-              onClick={() => runShortcut(command)}
-            >
-              {command}
-            </Button>
-          ))}
-        </nav>
-        <div className="terminal-status" aria-label="Terminal session online">
-          <span className="terminal-status-dot" aria-hidden="true" />
-          <span>SESSION ONLINE</span>
-        </div>
-      </header>
-
       <main className="terminal-main" aria-label="Anas Qabbal developer portfolio">
-        <div className="terminal-stream" ref={streamRef} role="log" aria-label="Terminal output" aria-live="polite" aria-relevant="additions text">
-          <section className="terminal-welcome" aria-label="Introduction">
-            <p className="terminal-prompt"><span>anas@portfolio</span>:~$ whoami</p>
-            <output className="terminal-output terminal-welcome-output">
-              <h1>Anas Qabbal</h1>
-              <p className="terminal-lede">Software Engineer — Systems, Full-Stack, Applied AI, DevOps</p>
-              <p className="terminal-intro">
-                Building dependable systems, thoughtful products, and practical AI-enabled tools across the stack.
-              </p>
-              <div className="terminal-welcome-actions" aria-label="Explore portfolio">
-                {shortcuts.map((command) => (
-                  <Button
-                    key={command}
-                    type="button"
-                    variant="ghost"
-                    className="terminal-shortcut"
-                    onClick={() => runShortcut(command)}
-                  >
-                    <span aria-hidden="true">./</span>{command}
-                  </Button>
-                ))}
-              </div>
-            </output>
-          </section>
-
+        <div className={`terminal-stream ${entries.length === 0 ? "terminal-stream-empty" : ""}`} ref={streamRef} role="log" aria-label="Terminal output" aria-live="polite" aria-relevant="additions text">
+          {entries.length === 0 && (
+            <p className="terminal-empty-state">
+              enter <span>/help</span> to start exploring
+            </p>
+          )}
           {entries.map(({ id, command }) => (
             <section className="terminal-entry" key={id}>
-              <p className="terminal-prompt"><span>anas@portfolio</span>:~$ {command}</p>
+              <p className="terminal-prompt"><span>anasqabbal</span>$_ /{command}</p>
               <output className="terminal-output" aria-label={`${command} output`}>
                 <CommandOutput command={command} />
               </output>
@@ -276,7 +253,9 @@ export function TerminalPortfolio() {
 
         <div className="terminal-composer">
           <form className="terminal-form" onSubmit={submit} aria-label="Run a terminal command">
-            <label className="terminal-command-prompt" htmlFor="terminal-command">$</label>
+            <label className="terminal-command-prompt" htmlFor="terminal-command">
+              anasqabbal$<span className="terminal-cursor" aria-hidden="true">_</span>
+            </label>
             <input
               ref={inputRef}
               id="terminal-command"
@@ -286,14 +265,35 @@ export function TerminalPortfolio() {
               autoCapitalize="none"
               spellCheck={false}
               value={draft}
-              onChange={(event) => setDraft(event.target.value)}
+              onChange={(event) => {
+                const nextDraft = event.target.value;
+                setDraft(nextDraft);
+                setSuggestionsOpen(nextDraft.startsWith("/"));
+              }}
               onKeyDown={handleKeyDown}
-              placeholder="Type a command…"
+              placeholder="/help"
             />
             <Button type="submit" variant="outline" className="terminal-run" aria-label="Run command">
               <span aria-hidden="true">↵</span> Run
             </Button>
           </form>
+          {suggestionsOpen && (
+            <div className="terminal-suggestions" role="listbox" aria-label="Available commands">
+              {commands
+                .filter(({ name }) => `/${name}`.startsWith(draft.toLowerCase()))
+                .map(({ name, description }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    className="terminal-suggestion"
+                    onClick={() => chooseCommand(name)}
+                  >
+                    <strong>/{name}</strong>
+                    <span>{description}</span>
+                  </button>
+                ))}
+            </div>
+          )}
         </div>
       </main>
     </div>

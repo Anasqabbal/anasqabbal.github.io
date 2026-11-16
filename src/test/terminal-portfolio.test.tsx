@@ -7,15 +7,19 @@ describe("terminal portfolio", () => {
     render(<TerminalPortfolio />);
     const input = screen.getByRole("textbox", { name: "Terminal command" });
 
-    fireEvent.change(input, { target: { value: "skills" } });
+    expect(screen.getByText("/help", { selector: "span" })).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: "/" } });
+    expect(screen.getByRole("listbox", { name: "Available commands" })).toBeInTheDocument();
+    fireEvent.change(input, { target: { value: "/skills" } });
     fireEvent.click(screen.getByRole("button", { name: "Run command" }));
     expect(screen.getByText("Areas of practice")).toBeInTheDocument();
 
-    fireEvent.change(input, { target: { value: "help" } });
+    fireEvent.change(input, { target: { value: "/help" } });
     fireEvent.keyDown(input, { key: "ArrowUp" });
-    expect(input).toHaveValue("skills");
+    expect(input).toHaveValue("/skills");
     fireEvent.keyDown(input, { key: "ArrowDown" });
-    expect(input).toHaveValue("help");
+    expect(input).toHaveValue("/help");
   });
 
   it("clears the draft with Escape and the output stream with clear", () => {
@@ -26,11 +30,11 @@ describe("terminal portfolio", () => {
     fireEvent.keyDown(input, { key: "Escape" });
     expect(input).toHaveValue("");
 
-    fireEvent.change(input, { target: { value: "about" } });
+    fireEvent.change(input, { target: { value: "/about" } });
     fireEvent.click(screen.getByRole("button", { name: "Run command" }));
     expect(screen.getByText("Anas Qabbal", { selector: "span" })).toBeInTheDocument();
 
-    fireEvent.change(input, { target: { value: "clear" } });
+    fireEvent.change(input, { target: { value: "/clear" } });
     fireEvent.click(screen.getByRole("button", { name: "Run command" }));
     expect(screen.queryByText("Anas Qabbal", { selector: "span" })).not.toBeInTheDocument();
   });

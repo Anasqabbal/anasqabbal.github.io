@@ -167,97 +167,6 @@ input {
   color: var(--text);
 }
 
-.terminal-header {
-  z-index: 1;
-  display: flex;
-  min-height: 76px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 16px 32px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-deep);
-}
-
-.terminal-identity {
-  display: flex;
-  min-width: 220px;
-  align-items: center;
-  gap: 14px;
-}
-
-.terminal-mark {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid var(--accent-dim);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 600;
-  text-shadow: var(--glow);
-}
-
-.terminal-name {
-  margin: 0;
-  font-family: var(--font-head);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.terminal-role {
-  margin: 4px 0 0;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.4;
-}
-
-.terminal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.terminal-shell .terminal-shortcut {
-  min-height: 36px;
-  border-radius: 0;
-  padding: 7px 10px;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 400;
-}
-
-.terminal-shell .terminal-shortcut:hover {
-  background: var(--surface);
-  color: var(--accent);
-}
-
-.terminal-status {
-  display: flex;
-  min-width: 126px;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  white-space: nowrap;
-}
-
-.terminal-status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: var(--glow);
-}
-
 .terminal-main {
   display: flex;
   width: 100%;
@@ -278,8 +187,20 @@ input {
   scrollbar-width: thin;
 }
 
-.terminal-welcome {
-  padding-bottom: 36px;
+.terminal-stream-empty {
+  display: grid;
+  place-items: center;
+}
+
+.terminal-empty-state {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.terminal-empty-state span {
+  color: var(--accent);
 }
 
 .terminal-prompt {
@@ -332,7 +253,6 @@ input {
 
 .terminal-entry {
   padding: 20px 0 24px;
-  border-top: 1px solid var(--border);
   animation: terminal-entry-in 150ms ease-out both;
 }
 
@@ -385,7 +305,6 @@ input {
   grid-template-columns: minmax(100px, 0.42fr) minmax(0, 1fr);
   gap: 16px;
   padding: 9px 0;
-  border-bottom: 1px solid var(--border);
 }
 
 .terminal-output-list strong {
@@ -407,7 +326,6 @@ input {
 .terminal-composer {
   z-index: 1;
   width: 100%;
-  border-top: 1px solid var(--border);
   background: var(--bg-deep);
 }
 
@@ -426,6 +344,12 @@ input {
   font-family: var(--font-mono);
   font-size: 13px;
   white-space: nowrap;
+}
+
+.terminal-cursor {
+  color: var(--accent);
+  text-shadow: var(--glow);
+  animation: terminal-cursor-blink 1s steps(1, end) infinite;
 }
 
 .terminal-input {
@@ -470,45 +394,52 @@ input {
   box-shadow: none !important;
 }
 
+.terminal-suggestions {
+  display: grid;
+  width: min(100%, 1120px);
+  gap: 2px;
+  margin: -4px auto 0;
+  padding: 0 32px 12px;
+}
+
+.terminal-suggestion {
+  display: flex;
+  max-width: 420px;
+  align-items: baseline;
+  gap: 18px;
+  border: 0;
+  border-radius: 0;
+  padding: 7px 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: left;
+}
+
+.terminal-suggestion:hover {
+  color: var(--text);
+}
+
+.terminal-suggestion strong {
+  min-width: 86px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+@keyframes terminal-cursor-blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
 @keyframes terminal-entry-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 760px) {
-  .terminal-header {
-    min-height: auto;
-    flex-wrap: wrap;
-    gap: 12px 16px;
-    padding: 14px 20px 10px;
-  }
-
-  .terminal-identity {
-    min-width: 0;
-    flex: 1;
-  }
-
-  .terminal-status {
-    min-width: auto;
-  }
-
-  .terminal-nav {
-    order: 3;
-    width: 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-  }
-
-  .terminal-shell .terminal-shortcut {
-    flex: 0 0 auto;
-  }
-
   .terminal-stream {
     padding: 32px 20px 24px;
-  }
-
-  .terminal-welcome-output h1 {
-    font-size: 40px;
   }
 
   .terminal-output-list {
@@ -520,13 +451,13 @@ input {
     gap: 10px;
     padding: 12px 20px;
   }
+
+  .terminal-suggestions {
+    padding-inline: 20px;
+  }
 }
 
 @media (max-width: 420px) {
-  .terminal-role {
-    font-size: 9px;
-  }
-
   .terminal-form {
     gap: 8px;
   }
