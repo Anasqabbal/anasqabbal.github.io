@@ -2,6 +2,14 @@
 import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { commandNames } from "@/lib/commands";
 
+const commandDescriptions: Record<string, string> = {
+  about: "who I am",
+  connect: "how to reach me",
+  projects: "what I built",
+  education: "where I studied",
+  clear: "reset the screen",
+};
+
 export function Composer({ value, onChange, onSubmit, onKeyDown, onCommandSelect }: { value: string; onChange: (value: string) => void; onSubmit: () => void; onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void; onCommandSelect: (command: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const mirrorRef = useRef<HTMLSpanElement>(null);
@@ -44,10 +52,10 @@ export function Composer({ value, onChange, onSubmit, onKeyDown, onCommandSelect
     setCursorOffset(mirrorRef.current?.getBoundingClientRect().width ?? 0);
   }, [value]);
   const submit = (event: FormEvent) => { event.preventDefault(); onSubmit(); };
-  const suggestions = value.startsWith("/") && !value.includes(" ") ? commandNames.filter((name) => name.startsWith(value.slice(1).toLowerCase())) : [];
+  const suggestions = value.startsWith("/") && !value.includes(" ") ? commandNames.filter((name) => commandDescriptions[name] && name.startsWith(value.slice(1).toLowerCase())) : [];
   return <div className="composer-shell">
     {suggestions.length > 0 && <div className="command-suggestions" role="listbox" aria-label="Available commands">
-      {suggestions.map((name) => <button type="button" key={name} onClick={() => onCommandSelect(`/${name}`)}>{`/${name}`}</button>)}
+      {suggestions.map((name) => <button type="button" key={name} onClick={() => onCommandSelect(`/${name}`)}><b>/{name}</b><span>{commandDescriptions[name]}</span></button>)}
     </div>}
     <form className="composer" onSubmit={submit}>
     <span className="composer-prompt"><span className="desktop-prompt">anasqabbal_$:</span><span className="mobile-prompt">_$:</span></span>
