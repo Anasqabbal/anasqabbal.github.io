@@ -1,0 +1,5 @@
+permissions:
+  '@tanstack/react-start':
+    skills: false
+  '@tanstack/router-plugin':
+    skills: false
