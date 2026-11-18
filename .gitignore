@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 /node_modules
+=======
+node_modules
+.next
+out
+*.tsbuildinfo
+>>>>>>> 25482ed4a2c9848a3b1e148b73ca174c32cfdea7

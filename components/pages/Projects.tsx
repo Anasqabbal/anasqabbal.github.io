@@ -1,0 +1,2 @@
+import { projects } from "@/data/content";
+export function Projects() { return <div className="page"><div className="label">// projects</div>{projects.map((project, index) => <article className="project" key={project.name}><div className="counter">0{index + 1} / 04</div><h2>{project.href ? <a href={project.href} target="_blank" rel="noopener noreferrer">{project.name}</a> : project.name}</h2>{project.status && <div className="muted code">{project.status}</div>}<p className="read">{project.summary}</p><div className="code muted">{project.stack}</div></article>)}</div>; }
